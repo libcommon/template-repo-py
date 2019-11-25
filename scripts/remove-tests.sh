@@ -30,4 +30,12 @@ fi
 
 PATTERN='if os.environ.get("ENVIRONMENT") == "TEST"'
 
-sed -i"" -n -e "/${PATTERN}/q;p" "${@}"
+if [ -x $(which gsed) ]
+then
+    COMMAND="gsed"
+else
+    COMMAND="sed"
+fi
+
+echo "::: INFO: Removing tests from ${@}"
+$COMMAND -i'' -n -e "/${PATTERN}/q;p" "${@}"
