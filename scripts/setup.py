@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 ## setup.py
 ##
 ## Copyright (c) 2019 libcommon
@@ -43,11 +42,10 @@ setuptools.setup(
     url="PACKAGE_CODE_URL",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.5',
+    python_requires='>=PACKAGE_MIN_PYTHON_VERSION',
 )
