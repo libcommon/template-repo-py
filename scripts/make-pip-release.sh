@@ -49,7 +49,7 @@ then
 fi
 
 # Remove tests from source file(s)
-./scripts/remove-tests.sh "${PACKAGE_NAME}/"
+./scripts/remove-tests.sh "${PACKAGE_NAME}"
 
 # Copy LICENSE file to package directory if exists
 if [ -f 'LICENSE' ]
@@ -68,8 +68,11 @@ cat ./scripts/setup.py | \
         -e "s/PACKAGE_MIN_PYTHON_VERSION/${PACKAGE_MIN_PYTHON_VERSION}/g" > setup.py
 chmod 744 setup.py
 
-echo "::: INFO: Generating universal wheel file to dist directory"
-python3 setup.py bdist_wheel --universal
+echo "::: INFO: Generating source distribution to dist directory"
+python3 setup.py sdist
+
+echo "::: INFO: Generating 'pure' wheel file to dist directory"
+python3 setup.py bdist_wheel
 
 # Remove development files
 ./scripts/remove-dev-files.sh
