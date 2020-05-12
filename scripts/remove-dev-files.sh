@@ -32,8 +32,9 @@ done
 
 for DIRECTORY in "__pycache__" ".mypy_cache" "build" "\.egg-info" "tests"
 do
-    if [ "${DIRECTORY}" == "tests" ]
+    if [ "${DIRECTORY}" == "tests" ] && [ -d "${DIRECTORY}" ]
     then
+        echo "::: INFO: Removing ${DIRECTORY}"
         git rm -r "${DIRECTORY}"
     else
         find . -iregex ".*${DIRECTORY}.*" \! -iregex '.*venv.*' -type d | \
