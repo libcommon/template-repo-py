@@ -21,7 +21,7 @@
 ## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ## SOFTWARE.
 
-for FILENAME in "pylintrc" "requirements-dev.txt" "setup.py"
+for FILENAME in "pylintrc" "requirements-dev.txt"
 do
     if [ -f $FILENAME ]
     then
@@ -30,14 +30,19 @@ do
     fi
 done 
 
-for DIRECTORY in "__pycache__" ".mypy_cache" "build" "\.egg-info"
+for DIRECTORY in "__pycache__" ".mypy_cache" "build" "\.egg-info" "tests"
 do
-    find . -iregex ".*${DIRECTORY}.*" \! -iregex '.*venv.*' -type d | \
-        while read DIRECTORY_PATH
-        do
-            echo "::: INFO: Removing ${DIRECTORY_PATH}"
-            rm -rf "${DIRECTORY_PATH}"
-        done
+    if [ "${DIRECTORY}" == "tests" ]
+    then
+        git rm -r "${DIRECTORY}"
+    else
+        find . -iregex ".*${DIRECTORY}.*" \! -iregex '.*venv.*' -type d | \
+            while read DIRECTORY_PATH
+            do
+                echo "::: INFO: Removing ${DIRECTORY_PATH}"
+                rm -rf "${DIRECTORY_PATH}"
+            done
+    fi
 done
 
 echo "::: INFO: Removing scripts directory"
