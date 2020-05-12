@@ -51,13 +51,6 @@ fi
 # Remove tests from source file(s)
 ./scripts/remove-tests.sh "${PACKAGE_NAME}"
 
-# Copy LICENSE file to package directory if exists
-if [ -f 'LICENSE' ]
-then
-    echo "::: INFO: Copying LICENSE file to package directory"
-    cp 'LICENSE' "${PACKAGE_NAME}"
-fi
-
 echo "::: INFO: Generating Setuptools setup.py file"
 cat ./scripts/setup.py | \
     sed \
