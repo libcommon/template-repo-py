@@ -38,6 +38,7 @@ else
 fi
 
 echo "::: INFO: Removing tests from ${@}"
-find "${@}" -type f -exec $COMMAND -i'' -n "/${PATTERN}/q;p" {} \; \
+find "${@}" -type f -exec grep -q "${PATTERN}" {} \; \
+    -exec $COMMAND -i'' -n "/${PATTERN}/q;p" {} \; \
     -exec $COMMAND -i'' '$d' {} \; \
     -exec $COMMAND -i'' '$d' {} \;
