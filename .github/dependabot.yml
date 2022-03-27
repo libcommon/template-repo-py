@@ -1,0 +1,27 @@
+version: 2
+
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+# for Dependabot config documentation
+updates:
+
+    # Project dependencies
+  - package-ecosystem: "poetry"
+    commit-message:
+      # Include list of dependencies updated in commit messages
+      include: "scope"
+    # Path to Poetry manifest files
+    # pyproject.toml and poetry.lock are in the root of the repo
+    directory: "/"
+    # Schedule to run Dependabot
+    # Change the interval to "daily" for important projects
+    # with larger user bases
+    schedule:
+      interval: "weekly"
+
+    # Build container
+  - package-ecosystem: "docker"
+    commit-message:
+      include: "scope"
+    directory: "/build-support/docker/"
+    schedule:
+      interval: "weekly"
