@@ -2,8 +2,10 @@
    :parser: myst_parser.sphinx_
 
 .. toctree::
-   :maxdepth: 2
+   :caption: API Reference
+   :maxdepth: 1
 
+   api/template_repo_py
 
 
 Indices and Tables
