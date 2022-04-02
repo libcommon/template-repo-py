@@ -49,6 +49,7 @@ exclude_patterns = [
 # ones.
 extensions = [
     "myst_parser",
+    "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
@@ -118,16 +119,12 @@ html_sidebars = {
 
 # -- Extension configuration -------------------------------------------------
 
-# -- Options for napoleon extension ----------------------------------------------
+# -- Options for intersphinx extension ---------------------------------------
+# See: https://sphinx-copybutton.readthedocs.io/en/latest/
 
-# Use Google-style docstrings
-napoleon_google_docstring = True
-# Use the admonition directive (.. admonition::) for Example(s) sections
-napoleon_use_admonition_for_examples = True
-# Use the admonition directive (.. admonition::) for Note(s) section
-napoleon_use_admonition_for_notes = True
-# Use type annotations for attributes in class body
-napoleon_attr_annotations = True
+copybutton_here_doc_delimiter = "EOF"
+copybutton_line_continuation_character = "\\"
+copybutton_prompt_text = "> "
 
 
 # -- Options for intersphinx extension ---------------------------------------
@@ -147,6 +144,18 @@ myst_heading_anchors = 3
 myst_number_code_blocks = [
     "python3",
 ]
+
+
+# -- Options for napoleon extension ----------------------------------------------
+
+# Use Google-style docstrings
+napoleon_google_docstring = True
+# Use the admonition directive (.. admonition::) for Example(s) sections
+napoleon_use_admonition_for_examples = True
+# Use the admonition directive (.. admonition::) for Note(s) section
+napoleon_use_admonition_for_notes = True
+# Use type annotations for attributes in class body
+napoleon_attr_annotations = True
 
 
 # -- Options for todo extension ----------------------------------------------
