@@ -1,3 +1,6 @@
+# Build container Dockerfile
+build-support/docker/Dockerfile
+
 # Compiled Python files
 **/*__pycache__
 
@@ -14,3 +17,6 @@
 # Vim swap files
 **/*.swp
 **/*.swo
+
+# YouCompleteMe config file
+.ycm_extra_conf.py
