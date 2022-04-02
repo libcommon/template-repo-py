@@ -56,7 +56,7 @@ extensions = [
 ]
 
 # Root/master document
-master_doc = "root"
+master_doc = "index"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [
@@ -71,7 +71,7 @@ templates_path = [
 #
 html_theme = "sphinx_material"
 html_title = project
-html_short_title = project
+html_short_title = html_title
 
 # Theme options
 # See: https://bashtage.github.io/sphinx-material/customization.html#customization
@@ -89,13 +89,17 @@ html_theme_options = {
     "repo_url": "",
     "repo_name": project,
 
-    # Visible levels of the global TOC; -1 means unlimited
-    "globaltoc_depth": 2,
-    # If False, expand all TOC entries
-    "globaltoc_collapse": False,
-    # If True, show hidden TOC entries
-    "globaltoc_includehidden": False,
-    # If True, show version dropdown
+    # If True, minify CSS files in output directory    
+    "css_minify": True,    
+    # Visible levels of the global TOC; -1 means unlimited                                    
+    "globaltoc_depth": 3,                                    
+    # If False, expand all TOC entries                                    
+    "globaltoc_collapse": True,                                    
+    # If True, show hidden TOC entries                                    
+    "globaltoc_includehidden": False,                                    
+    # If True, minify HTML after generation                                    
+    "html_minify": True,                                    
+    # If True, show version dropdown                                    
     "version_dropdown": False,
 }
 
@@ -105,6 +109,11 @@ html_theme_options = {
 html_static_path = [
     "_static/",
 ]
+
+# Override default to include global TOC                                                           
+html_sidebars = {                                  
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]                                     
+}
 
 
 # -- Extension configuration -------------------------------------------------
