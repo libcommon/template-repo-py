@@ -280,12 +280,19 @@ run-make-docs() {
     poetry run python build-support/python/run/gen_docs_development_md.py \
         "$(pwd)/DEVELOPMENT.md" "$(pwd)/docs/_src/DEVELOPMENT.md"
 
+    info "Determining current version of package"
+    CURRENT_VERSION=$(PYTHONPATH=docs/_src poetry run python -c "import conf; print(conf.release)")
+    info "Current version is ${CURRENT_VERSION}, updating versions.json"
+    poetry run python build-support/python/run/update_versions_file.py \
+        docs/versions.json "v${CURRENT_VERSION}"
+
     info "Compiling documentation with Sphinx"
     poetry run sphinx-build \
         -M html \
         docs/_src/ \
-        docs/ \
+        "docs/v${CURRENT_VERSION}/" \
         "${@}"
+    mv docs/v${CURRENT_VERSION}/html/* "docs/v${CURRENT_VERSION}/"
 }
 
 run-publish() {

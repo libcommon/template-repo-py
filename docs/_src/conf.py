@@ -27,7 +27,7 @@ project = "template-repo-py"
 copyright = "2022, Libcommon"
 author = "Libcommon"
 
-# The short X.Y version
+# The short X.Y.Z version
 version = "0.1.0"
 
 # The full version, including alpha/beta/rc tags
@@ -101,7 +101,9 @@ html_theme_options = {
     # If True, minify HTML after generation                                    
     "html_minify": True,                                    
     # If True, show version dropdown                                    
-    "version_dropdown": False,
+    "version_dropdown": True,
+    # Path to versions JSON file relative to site root
+    "version_json": "../versions.json",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
