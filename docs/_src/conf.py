@@ -119,7 +119,7 @@ html_sidebars = {
 
 # -- Extension configuration -------------------------------------------------
 
-# -- Options for intersphinx extension ---------------------------------------
+# -- Options for copybutton extension ---------------------------------------
 # See: https://sphinx-copybutton.readthedocs.io/en/latest/
 
 copybutton_here_doc_delimiter = "EOF"
