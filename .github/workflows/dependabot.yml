@@ -48,6 +48,10 @@ jobs:
         run: |
           ./run.sh build
 
+      - name: Build documentation
+        run: |
+          ./run.sh make-docs
+
       - name: Approve the PR
         run: gh pr review --approve "${PR_URL}"
         env:
