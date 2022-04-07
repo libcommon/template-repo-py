@@ -10,7 +10,6 @@ set -eu
 # to import from correct path
 if [ -d /build-support ]
 then
-    ls -laFh ~/
     . ~/.bashrc
     BUILD_SUPPORT_ROOT="/build-support"
 else
@@ -37,9 +36,11 @@ run-build-base() {
 }
 
 run-in-container() {
+    # If input device is not a TTY don't run with `-it` flags
+    local INTERACTIVE_FLAGS="$(test -t 0 && echo '-it' || echo '')"
     ${CONTAINER_RUNTIME} run \
 		--rm \
-		-it \
+         ${INTERACTIVE_FLAGS} \
 		-u ${USERNAME} \
         -v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(pwd):/project \
