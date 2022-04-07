@@ -10,6 +10,7 @@ set -eu
 # to import from correct path
 if [ -d /build-support ]
 then
+    ls -laFh ~/
     . ~/.bashrc
     BUILD_SUPPORT_ROOT="/build-support"
 else
@@ -31,6 +32,7 @@ run-build-base() {
         --build-arg PYTHON_VERSION=${DEFAULT_PYTHON_VERSION} \
         --build-arg UID=${USERID} \
         --build-arg USERNAME=${USERNAME} \
+        "${@}" \
         .
 }
 
