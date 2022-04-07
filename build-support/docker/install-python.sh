@@ -30,7 +30,8 @@ apk add --no-cache \
     readline-dev \
     sqlite-dev \
     zlib-dev
-sudo -u $USERNAME "/home/${USERNAME}/.asdf/bin/asdf" plugin add python
-sudo -u $USERNAME "/home/${USERNAME}/.asdf/bin/asdf" install python $PYTHON_VERSION 2>/dev/null
-sudo -u $USERNAME "/home/${USERNAME}/.asdf/bin/asdf" global python $PYTHON_VERSION
-sudo -u $USERNAME "/home/${USERNAME}/.asdf/bin/asdf" reshim python $PYTHON_VERSION
+
+sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf plugin add python"
+sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf install python ${PYTHON_VERSION} 2>/dev/null"
+sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf global python ${PYTHON_VERSION}"
+sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf reshim python ${PYTHON_VERSION}"

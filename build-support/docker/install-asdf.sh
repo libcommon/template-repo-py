@@ -15,8 +15,8 @@ info "Installing asdf dependencies"
 apk add --no-cache curl git
 
 info "Installing asdf"
-sudo -u $USERNAME git clone https://github.com/asdf-vm/asdf.git /home/${USERNAME}/.asdf
+sudo -Hiu $USERNAME bash -c 'git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf'
 
 info "Adding asdf to bash profile"
-echo ". \$HOME/.asdf/asdf.sh" | sudo -u $USERNAME tee -a "/home/${USERNAME}/.bashrc" >/dev/null
-echo ". \$HOME/.asdf/completions/asdf.bash" | sudo -u $USERNAME tee -a "/home/${USERNAME}/.bashrc" >/dev/null
+sudo -Hiu $USERNAME bash -c 'echo ". $HOME/.asdf/asdf.sh" >> "$HOME/.bashrc"'
+sudo -Hiu $USERNAME bash -c 'echo ". $HOME/.asdf/completions/asdf.bash" >> "$HOME/.bashrc"'

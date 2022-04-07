@@ -17,14 +17,18 @@ then
     exit 1
 fi
 
-adduser \
-    -h "/home/${USERNAME}" \
-    -s /bin/bash \
-    -u ${UID} \
-    -D \
-    ${USERNAME}
-passwd -d ${USERNAME}
-info "Added user ${USERNAME} with id ${UID}"
+apk add --no-cache sudo 
 
-apk add --no-cache sudo && \
+if ! ( getent passwd "${USERNAME}" )
+then
+    adduser \
+        -h "/home/${USERNAME}" \
+        -s /bin/bash \
+        -u ${UID} \
+        -D \
+        ${USERNAME}
+    passwd -d ${USERNAME}
+    info "Added user ${USERNAME} with id ${UID}"
+
     echo "${USERNAME} ALL=(NOPASSWD) ALL" > "/etc/sudoers.d/${USERNAME}" && chmod 0440 "/etc/sudoers.d/${USERNAME}"
+fi
