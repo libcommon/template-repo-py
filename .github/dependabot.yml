@@ -5,7 +5,7 @@ version: 2
 updates:
 
     # Project dependencies
-  - package-ecosystem: "poetry"
+  - package-ecosystem: "pip"
     commit-message:
       # Include list of dependencies updated in commit messages
       include: "scope"
