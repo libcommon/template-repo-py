@@ -429,6 +429,7 @@ fi
 if ( \
     [ "${COMMAND}" = "build-base" ] \
     || [ "${COMMAND}" = "editor-venv" ] \
+    || [ "${COMMAND}" = "push-base" ] \
 )
 then
     RUNTIME_CONTEXT="local"
