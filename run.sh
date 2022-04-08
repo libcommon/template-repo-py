@@ -25,14 +25,20 @@ fi
 
 run-build-base() {
     ${CONTAINER_RUNTIME} build \
-        --target ${BUILD_TARGET_STAGE} \
-        -t ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} \
+        --target "${BUILD_TARGET_STAGE}" \
+        -t "${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG}" \
         -f build-support/docker/Dockerfile \
-        --build-arg PYTHON_VERSION=${DEFAULT_PYTHON_VERSION} \
-        --build-arg UID=${USERID} \
-        --build-arg USERNAME=${USERNAME} \
+        --build-arg PYTHON_VERSION="${DEFAULT_PYTHON_VERSION}" \
+        --build-arg UID="${USERID}" \
+        --build-arg USERNAME="${USERNAME}" \
         "${@}" \
         .
+}
+
+run-push-base() {
+    ${CONTAINER_RUNTIME} push \
+        "${@}" \
+        "${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG}"
 }
 
 run-in-container() {
@@ -45,7 +51,7 @@ run-in-container() {
         -v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(pwd):/project \
 		-w /project \
-		${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} \
+		${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG} \
         --local "${@}"
 }
 
@@ -376,6 +382,7 @@ print-usage() {
     echo "lint              lint code with Pylint"
     echo "make-docs         compile documentation with Sphinx"
     echo "publish           publish distribution packages to PyPI"
+    echo "push-base         push build container image to registry"
     echo "shell             start Python shell in virtual environment"
     echo "test              run unit and documentation tests with Pytest"
     echo "update-deps       update dependencies with Poetry"
