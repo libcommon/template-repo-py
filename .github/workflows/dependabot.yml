@@ -7,12 +7,18 @@ on:
 
 permissions:
   contents: write
+  packages: read
   pull-requests: write
 
 jobs:
 
+  build-container:
+    uses: ./.github/workflows/build-container.yml
+
   dependabot:
     runs-on: ubuntu-latest
+    needs:
+      - build-container
     steps:
 
       - name: Checkout the repo
@@ -22,28 +28,6 @@ jobs:
         uses: docker/setup-buildx-action@v1
         with:
           install: true
-
-      # See: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
-      - name: Configure caching for Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Build the build container image
-        run: |
-          ./run.sh build-base \
-              --cache-from type=local,src=/tmp/.buildx-cache \
-              --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      # See: https://github.com/docker/build-push-action/issues/252
-      # and https://github.com/moby/buildkit/issues/1896
-      - name: Replace existing cache with new image layers
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Run tests and check code
         run: |
