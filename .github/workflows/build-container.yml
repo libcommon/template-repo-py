@@ -43,6 +43,7 @@ jobs:
       - name: Build the build container image
         run: |
           ./run.sh build-base \
+              --load \
               --cache-from type=local,src=/tmp/.buildx-cache \
               --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max
 
