@@ -209,7 +209,7 @@ run-init() {
     read -e -p "Author Name: " PROJECT_AUTHOR_NAME
     if [ -z "${PROJECT_AUTHOR_NAME}" ]
     then
-        error "Must provide author (should be of the form 'First Last')"
+        error "Must provide author name"
         exit 1
     fi
     read -e -p "Author Email Address: " PROJECT_AUTHOR_EMAIL_ADDRESS
@@ -240,9 +240,11 @@ run-init() {
         docs/_src/index.md
 
     sed -i'' \
+        -e "s/libcommon/${PROJECT_AUTHOR_NAME}/g" \
         -e "s/template-repo-py/${PROJECT_NAME}/g" \
         -e "s/template_repo_py/${PROJECT_MODULE_NAME}/g" \
         README.md \
+        build-support/shell/run/config.sh \
         docs/_src/root.rst \
         pytest.ini \
         tests/template_repo_py/test_template_repo_py.py
@@ -429,6 +431,7 @@ fi
 if ( \
     [ "${COMMAND}" = "build-base" ] \
     || [ "${COMMAND}" = "editor-venv" ] \
+    || [ "${COMMAND}" = "push-base" ] \
 )
 then
     RUNTIME_CONTEXT="local"

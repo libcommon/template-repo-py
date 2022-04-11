@@ -5,20 +5,14 @@ on:
       - "dependabot/**"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  packages: read
-  pull-requests: write
-
 jobs:
-
-  build-container:
-    uses: ./.github/workflows/build-container.yml
 
   dependabot:
     runs-on: ubuntu-latest
-    needs:
-      - build-container
+    permissions:
+      contents: write
+      packages: read
+      pull-requests: write
     steps:
 
       - name: Checkout the repo

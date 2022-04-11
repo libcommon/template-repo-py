@@ -21,10 +21,8 @@ RUNTIME_CONTEXT="container"
 
 # Default container registry to push build container image to
 BUILD_IMAGE_REGISTRY="ghcr.io"
-# Name of the build container image
-# If you have multiple repos with the same name
-# change this to ensure the build containers have different names
-BUILD_IMAGE_URL="${BUILD_IMAGE_REGISTRY}/$(basename $(pwd))"
+# URL of the build container image, including the registry hostname and image path
+BUILD_IMAGE_URL="${BUILD_IMAGE_REGISTRY}/libcommon/$(basename $(pwd))"
 # Tag of the build container image
 BUILD_IMAGE_TAG="build"
 # Target stage of the build container image
