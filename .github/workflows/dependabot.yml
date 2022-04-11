@@ -9,7 +9,7 @@ jobs:
 
   build-container:
     uses: ./.github/workflows/build-container.yml
-    permission:
+    permissions:
       contents: read
       packages: write
 
