@@ -9,8 +9,6 @@ jobs:
 
   dependabot:
     runs-on: ubuntu-latest
-    needs:
-      - build-container
     permissions:
       contents: write
       packages: read
