@@ -10,7 +10,6 @@ set -eu
 # to import from correct path
 if [ -d /build-support ]
 then
-    ls -laFh ~/
     . ~/.bashrc
     BUILD_SUPPORT_ROOT="/build-support"
 else
@@ -26,25 +25,33 @@ fi
 
 run-build-base() {
     ${CONTAINER_RUNTIME} build \
-        --target ${BUILD_TARGET_STAGE} \
-        -t ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} \
+        --target "${BUILD_TARGET_STAGE}" \
+        -t "${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG}" \
         -f build-support/docker/Dockerfile \
-        --build-arg PYTHON_VERSION=${DEFAULT_PYTHON_VERSION} \
-        --build-arg UID=${USERID} \
-        --build-arg USERNAME=${USERNAME} \
+        --build-arg PYTHON_VERSION="${DEFAULT_PYTHON_VERSION}" \
+        --build-arg UID="${USERID}" \
+        --build-arg USERNAME="${USERNAME}" \
         "${@}" \
         .
 }
 
+run-push-base() {
+    ${CONTAINER_RUNTIME} push \
+        "${@}" \
+        "${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG}"
+}
+
 run-in-container() {
+    # If input device is not a TTY don't run with `-it` flags
+    local INTERACTIVE_FLAGS="$(test -t 0 && echo '-it' || echo '')"
     ${CONTAINER_RUNTIME} run \
 		--rm \
-		-it \
+         ${INTERACTIVE_FLAGS} \
 		-u ${USERNAME} \
         -v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(pwd):/project \
 		-w /project \
-		${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} \
+		${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG} \
         --local "${@}"
 }
 
@@ -202,7 +209,7 @@ run-init() {
     read -e -p "Author Name: " PROJECT_AUTHOR_NAME
     if [ -z "${PROJECT_AUTHOR_NAME}" ]
     then
-        error "Must provide author (should be of the form 'First Last')"
+        error "Must provide author name"
         exit 1
     fi
     read -e -p "Author Email Address: " PROJECT_AUTHOR_EMAIL_ADDRESS
@@ -233,9 +240,11 @@ run-init() {
         docs/_src/index.md
 
     sed -i'' \
+        -e "s/libcommon/${PROJECT_AUTHOR_NAME}/g" \
         -e "s/template-repo-py/${PROJECT_NAME}/g" \
         -e "s/template_repo_py/${PROJECT_MODULE_NAME}/g" \
         README.md \
+        build-support/shell/run/config.sh \
         docs/_src/root.rst \
         pytest.ini \
         tests/template_repo_py/test_template_repo_py.py
@@ -375,6 +384,7 @@ print-usage() {
     echo "lint              lint code with Pylint"
     echo "make-docs         compile documentation with Sphinx"
     echo "publish           publish distribution packages to PyPI"
+    echo "push-base         push build container image to registry"
     echo "shell             start Python shell in virtual environment"
     echo "test              run unit and documentation tests with Pytest"
     echo "update-deps       update dependencies with Poetry"
@@ -421,6 +431,7 @@ fi
 if ( \
     [ "${COMMAND}" = "build-base" ] \
     || [ "${COMMAND}" = "editor-venv" ] \
+    || [ "${COMMAND}" = "push-base" ] \
 )
 then
     RUNTIME_CONTEXT="local"

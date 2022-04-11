@@ -2,18 +2,17 @@ name: Auto-merge Dependabot PRs
 on:
   pull_request:
     branches:
-      - dependabot/**
-
-permissions:
-  contents: write
-  pull-requests: write
+      - "dependabot/**"
+  workflow_dispatch:
 
 jobs:
 
   dependabot:
     runs-on: ubuntu-latest
-    if: "${{ github.actor == 'dependabot[bot]' }}"
-
+    permissions:
+      contents: write
+      packages: read
+      pull-requests: write
     steps:
 
       - name: Checkout the repo
@@ -24,31 +23,20 @@ jobs:
         with:
           install: true
 
-      # See: https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#local-cache
-      - name: Configure caching for Docker layers
-        uses: actions/cache@v2
+      - name: Login to Github Packages
+        uses: docker/login-action@v1
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Build the build container image
-        run: |
-          ./run.sh build-base \
-              --cache-from type=local,src=/tmp/.buildx-cache \
-              --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      # See: https://github.com/docker/build-push-action/issues/252
-      # and https://github.com/moby/buildkit/issues/1896
-      - name: Replace existing cache with new image layers
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run tests and check code
         run: |
           ./run.sh build
+
+      - name: Build documentation
+        run: |
+          ./run.sh make-docs
 
       - name: Approve the PR
         run: gh pr review --approve "${PR_URL}"
