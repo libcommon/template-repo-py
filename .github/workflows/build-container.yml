@@ -3,17 +3,34 @@ on:
   pull_request:
     branches:
       - "build-support/docker/**"
+  push:
+    branches:
+      - master
+  schedule:
+    # one per week on Fridays at midnight
+    - cron: "0 0 * * 5"
   workflow_call:
+    inputs:
+      push_container:
+        type: boolean
+        required: false
+        default: true
+        description: "Whether to push build container to configured container registry"
   workflow_dispatch:
-
-permissions:
-  contents: read
-  packages: write
+    inputs:
+      push_container:
+        type: boolean
+        required: false
+        default: true
+        description: "Whether to push build container to configured container registry"
 
 jobs:
 
   build-container:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
 
       - name: Checkout the repo
@@ -55,5 +72,6 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Push build container image to registry
+        if: ${{ ! startsWith(github.ref_name, "build-support/docker") || $inputs.push_container || $github.event.inputs.push_container }}
         run: |
           ./run.sh push-base
