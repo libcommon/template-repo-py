@@ -72,6 +72,6 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Push build container image to registry
-        if: ${{ ! startsWith(github.ref_name, "build-support/docker") || $inputs.push_container || $github.event.inputs.push_container }}
+        if: "${{ ! startsWith(github.ref_name, 'build-support/docker') || $inputs.push_container || $github.event.inputs.push_container }}"
         run: |
           ./run.sh push-base
