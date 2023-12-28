@@ -1,8 +1,8 @@
 [tool.black]
 include = "\\.pyi?$"
 line-length = 120
-# Should match Poetry Python version setting
-target-version = ["py38"]
+# Must include PYTHON_VERSION setting
+target-version = ["py38", "py39", "py310", "py311"]
 
 [tool.poetry]
 name = "template-repo-py"
@@ -18,21 +18,40 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+# Must include Poetry Python version setting
+python = ">=3.8, <=3.11"
 
-[tool.poetry.dev-dependencies]
-black = "~22.3.0"
-isort = "~5.10.0"
-mypy = "<1.0"
-myst-parser = "~0.17.2"
-pylint = "~2.13.5"
-pytest = "~7.1.0"
-pytest-cov = "~3.0.0"
-sphinx = "~4.5.0"
-sphinx-autodoc-typehints = "~1.18.1"
-sphinx-copybutton = "~0.5.0"
-sphinx-material = "0.0.35"
+[tool.poetry.group.check.dependencies]
+mypy = "^1.8.0"
+
+[tool.poetry.group.fmt.dependencies]
+black = "^23.12.1"
+isort = "^5.13.2"
+
+[tool.poetry.group.lint.dependencies]
+pylint = "^3.0.3"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.group.docs.dependencies]
+myst-parser = "^2.0.0"
+sphinx = "^7.2.6"
+sphinx-autodoc-typehints = "^1.25.2"
+sphinx-copybutton = "^0.5.2"
+sphinx-material = "0.0.36"
+
+[tool.isort]
+line_length = 120
+# See: https://pycqa.github.io/isort/reference/isort/profiles.html
+profile = black
+src_paths = ["src", "tests" ]
+
+[tool.mypy]
+warn_return_any = true
+warn_unused_ignores = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.8.0"]
 build-backend = "poetry.core.masonry.api"

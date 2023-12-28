@@ -37,11 +37,11 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=C0102,
-    C0111,
-    C0330,
-    R0801,  # Don't need Pylint to detect duplicate code, false positives on overriden functions
-    W0511   # Don't fail Pylint check with TODO messages
+disable=C0104,  # Disallowed names
+    C0114,  # Missing module docstring (see: C0111)
+    C0330,  # Trailing whitespace
+    R0801,  # Duplicate code, false positives on overriden functions
+    W0511   # TODO messages
 
 
 [REPORTS]
