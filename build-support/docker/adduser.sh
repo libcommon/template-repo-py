@@ -30,5 +30,5 @@ then
     passwd -d ${USERNAME}
     info "Added user ${USERNAME} with id ${UID}"
 
-    echo "${USERNAME} ALL=(NOPASSWD) ALL" > "/etc/sudoers.d/${USERNAME}" && chmod 0440 "/etc/sudoers.d/${USERNAME}"
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" && chmod 0440 "/etc/sudoers.d/${USERNAME}"
 fi
