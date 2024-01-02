@@ -277,7 +277,7 @@ run-init() {
     sed -i'' \
         -e "s/template-repo-py: [^\"]\+$/${PROJECT_NAME}: ${PROJECT_DESCRIPTION}/g" \
         README.md \
-        docs/_src/index.md
+        docs/_src/index_introduction.md
 
     sed -i'' \
         -e "s/libcommon/${PROJECT_AUTHOR_NAME}/g" \
