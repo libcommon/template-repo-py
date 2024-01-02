@@ -17,11 +17,10 @@ That's it! All other development dependencies are installed in the build contain
 
 ## Build Container
 
-The build container, defined in [build-support/docker/Dockerfile](build-support/docker/Dockerfile), is based on [alpine](https://hub.docker.com/_/alpine).
-It includes the software version management tool `asdf`, which is used to install both `Python3` and [Poetry](https://python-poetry.org/docs/).
-The repository files are mounted into the container before each command is run, so the container is not rebuilt after any files are changed.
+The build container, defined in [build-support/docker/Dockerfile](build-support/docker/Dockerfile), is based on [Alpine Linux](https://hub.docker.com/_/alpine).
+The repository files are mounted into the container before each command is run, so the container is not rebuilt after any source files are changed.
 To add tools or make other changes to the build container, edit the `build` or any preceding stage in the [Dockerfile](build-support/docker/Dockerfile)
-and rebuild it.
+and rebuild it (using the command `./run.sh build-base`, see below).
 
 ## Build CLI
 
@@ -37,29 +36,20 @@ Once you have installed a container runtime and it's working properly, clear the
 ./run.sh -l clean && ./run.sh build-base
 ```
 
+Initialize the project with a project name and description, module name, author, and source code license:
+
+```bash
+./run.sh init
+```
+
 If you are using an editor like Vim/Neovim and need a virtual environment for code completion, run the `editor-venv` command:
 
 ```bash
 ./run.sh editor-venv
 ```
 
-Create the build virtual environment, and generate a `requirements.txt` file for the editor virtual environment if it exists:
-
-```bash
-./run.sh update-deps
-```
-
-Install dependencies from the `requirements.txt` file in the editor virtual environment, if it exists:
-
-```bash
-./run.sh editor-venv
-```
-
-Initialize the project with a project name and description, module name, author, and source code license:
-
-```bash
-./run.sh init
-```
+This creates a virtual environment in `build-support/python/virtualenvs/editor-venv/`. See [.ycm_extra_conf.py](.ycm_extra_conf.py)
+(for the YouCompleteMe plugin) for how to point a Vim/Neovim plugin to the virtual environment.
 
 Now you're ready to start hacking!
 
@@ -123,6 +113,7 @@ run-bandit() {
 }
 ```
 
+By default, commands will be run use the default Python version set in `config.sh`. To run a command in every support Python version, or locally-only, edit the `run-command` function in `run.sh`.
 After adding a command, make sure to update the usage in the `print-usage()` function and the [commands table](#build-cli-commands) above.
 
 ## Writing Tests
