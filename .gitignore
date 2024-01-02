@@ -9,6 +9,7 @@
 **/.mypy_cache
 
 # Python virtual environment
+build-support/python/virtualenvs
 **/*venv
 
 # Vim swap files

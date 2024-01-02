@@ -11,6 +11,7 @@ set -eu
 if [ -d /build-support ]
 then
     . ~/.bashrc
+    export PATH=$HOME/.local/bin:$PATH
     BUILD_SUPPORT_ROOT="/build-support"
 else
     BUILD_SUPPORT_ROOT="./build-support"
@@ -28,7 +29,8 @@ run-build-base() {
         --target "${BUILD_TARGET_STAGE}" \
         -t "${BUILD_IMAGE_URL}:${BUILD_IMAGE_TAG}" \
         -f build-support/docker/Dockerfile \
-        --build-arg PYTHON_VERSION="${DEFAULT_PYTHON_VERSION}" \
+        --build-arg PYTHON_VERSIONS="${PYTHON_VERSIONS}" \
+        --build-arg DEFAULT_PYTHON_VERSION="${DEFAULT_PYTHON_VERSION}" \
         --build-arg UID="${USERID}" \
         --build-arg USERNAME="${USERNAME}" \
         "${@}" \
@@ -60,13 +62,37 @@ run-in-container() {
 ##### Command Utilities #####
 #############################
 
+run-activate-environment() {
+    local PYTHON_FULL_VERSION="${1}"
+    shift
+    local PYTHON_MAJOR_MINOR_VERSION="$(echo ${PYTHON_FULL_VERSION} | grep -o '[0-9]\{1,2\}\.[0-9]\{1,2\}' )"
+
+    poetry env use ${PYTHON_MAJOR_MINOR_VERSION}
+}
+
 run-preamble() {
-    if ! [ -d .venv/ ]
+    if ! [ -d "$(poetry env info --path)" ]
     then
-        info "Installing project and dependencies"
-        poetry install
+        run-activate-environment ${DEFAULT_PYTHON_VERSION}
     fi
+    info "Installing project and dependencies"
+    poetry install
     poetry run pip install -U pip wheel >/dev/null
+}
+
+run-generate-requirements-file() {
+    local REQUIREMENTS_PATH="${1}"
+    shift
+
+    poetry export \
+        --format requirements.txt \
+        --output "${REQUIREMENTS_PATH}" \
+        --with check \
+        --with fmt \
+        --with lint \
+        --with test \
+        --with docs \
+        --without-hashes
 }
 
 run-command() {
@@ -78,7 +104,35 @@ run-command() {
         run-in-container "${COMMAND}" "${@}"
     elif [ ${RUNTIME_CONTEXT} = "local" ]
     then
-        run-${COMMAND} "${@}"
+        if ( \
+            [ "${COMMAND}" = "build-base" ] \
+            || [ "${COMMAND}" = "clean" ] \
+            || [ "${COMMAND}" = "editor-venv" ] \
+            || [ "${COMMAND}" = "exec" ] \
+            || [ "${COMMAND}" = "publish" ] \
+            || [ "${COMMAND}" = "push-base" ] \
+            || [ "${COMMAND}" = "shell" ] \
+        )
+        then
+            run-${COMMAND} "${@}"
+        elif ( \
+            [ "${COMMAND}" = "build" ] \
+            || [ "${COMMAND}" = "check" ] \
+            || [ "${COMMAND}" = "test" ] \
+        )
+        then
+            for PYTHON_VERSION in ${PYTHON_VERSIONS}
+            do
+                run-activate-environment ${PYTHON_VERSION}
+                run-preamble
+                run-${COMMAND} "${@}"
+            done
+        # run through only the default Python version
+        else
+            run-activate-environment ${DEFAULT_PYTHON_VERSION}
+            run-preamble
+            run-${COMMAND} "${@}"
+        fi
     else
         error "Invalid value for RUNTIME_CONTEXT: ${RUNTIME_CONTEXT}"
         exit 1
@@ -91,8 +145,6 @@ run-command() {
 ####################
 
 run-build() {
-    run-preamble
-
     run-fmt-check
 
     run-check
@@ -106,8 +158,6 @@ run-build() {
 }
 
 run-check() {
-    run-preamble
-
     info "Checking types with MyPy"
     poetry run mypy src tests
 }
@@ -126,39 +176,30 @@ run-clean() {
 }
 
 run-editor-venv() {
-    if ! [ -d "${EDITOR_VENV_PATH}"  ]
+    if ! [ -d "${EDITOR_VENV_PATH}" ]
     then
-        local PYTHON_BIN_PATH="${1:-$(which python3)}"
-
-        info "Creating editor virtual environment using ${PYTHON_BIN_PATH}"
-        ${PYTHON_BIN_PATH} -m venv "${EDITOR_VENV_PATH}"
-        . "${EDITOR_VENV_PATH}/bin/activate"
-        pip install -U pip wheel
-        info "Installing project in editable (develop) mode"
-        pip install -e .
-        deactivate
+        info "Creating virtual environment"
+        python3 -m venv "${EDITOR_VENV_PATH}"
     fi
+    info "Creating requirements.txt file"
+    # Must use container to create requirements.txt file using Poetry
+    RUNTIME_CONTEXT="container"
+    run-command generate-requirements-file "${EDITOR_VENV_PATH}/requirements.txt"
+    RUNTIME_CONTEXT="local"
 
-    if [ -e "${EDITOR_VENV_PATH}/requirements.txt" ]
-    then
-        . "${EDITOR_VENV_PATH}/bin/activate"
-        pip install -U pip wheel
-        info "Installing project dependencies"
-        pip install -r "${EDITOR_VENV_PATH}/requirements.txt"
-        deactivate
-    fi
+    info "Installing dependencies in editor virtual environment"
+    . "${EDITOR_VENV_PATH}/bin/activate"
+    pip install -U pip wheel
+    pip install -r "${EDITOR_VENV_PATH}/requirements.txt"
+    deactivate
 }
 
 run-exec() {
-    run-preamble
-
-    info "Running command in virtual environment: ${@}"
-    poetry run "${@}"
+    info "Running command: ${*}"
+    poetry run ${@}
 }
 
 run-fmt() {
-    run-preamble
-
     info "Sorting imports with isort"
     poetry run isort src/ tests/
 
@@ -167,8 +208,6 @@ run-fmt() {
 }
 
 run-fmt-check() {
-    run-preamble
-
     info "Checking imports with isort"
     poetry run isort --check src/ tests/
 
@@ -255,15 +294,11 @@ run-init() {
 }
 
 run-lint() {
-    run-preamble
-
     info "Linting code with Pylint"
     poetry run pylint src/ tests/
 }
 
 run-make-docs() {
-    run-preamble
-
     ls src/ | head -n1 | tr -d '/' | while read MODULE_NAME
     do
 
@@ -307,47 +342,37 @@ run-make-docs() {
 }
 
 run-publish() {
-    run-build
+    run-command build
+
+    run-activate-environment ${DEFAULT_PYTHON_VERSION}
+    run-preamble
 
     info "Creating and publishing distribution packages to PyPI"
     poetry publish
 }
 
 run-shell() {
-    run-preamble
-
-    info "Entering shell in virtual environment"
-    poetry shell
+    info "Entering shell"
+    bash
 }
 
 run-test() {
-    run-preamble
-
     info "Running tests with Pytest"
     poetry run pytest
 }
 
 run-update-deps() {
-    run-preamble
-
     info "Updating dependencies with Poetry"
     poetry update
 
     if [ -d "${EDITOR_VENV_PATH}" ]
     then
-        info "Updating editor virtual environment requirements"
-        poetry export \
-            --format requirements.txt \
-            --output "${EDITOR_VENV_PATH}/requirements.txt" \
-            --dev \
-            --without-hashes
+        info "Run the \`editor-venv\` command to update the editor virtual environment"
     fi
 }
 
 run-version() {
     local VERSION="${1:-}"
-
-    run-preamble
 
     if [ -z "${VERSION}" ]
     then

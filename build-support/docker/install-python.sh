@@ -5,9 +5,9 @@ set -e
 . /build-support/shell/common/log.sh
 
 
-if [ -z "${PYTHON_VERSION}" ]
+if [ -z "${PYTHON_VERSIONS}" ]
 then
-    error "Must set PYTHON_VERSION environment variable"
+    error "Must set PYTHON_VERSIONS environment variable"
     exit 1
 fi
 
@@ -31,7 +31,9 @@ apk add --no-cache \
     sqlite-dev \
     zlib-dev
 
-sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf plugin add python"
-sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf install python ${PYTHON_VERSION} 2>/dev/null"
-sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf global python ${PYTHON_VERSION}"
-sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf reshim python ${PYTHON_VERSION}"
+sudo -Hiu $USERNAME bash -c '${HOME}/.asdf/bin/asdf plugin add python'
+for PYTHON_VERSION in $PYTHON_VERSIONS
+do
+    sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf install python ${PYTHON_VERSION} 2>/dev/null"
+done
+sudo -Hiu $USERNAME bash -c "\${HOME}/.asdf/bin/asdf global python ${PYTHON_VERSIONS}"

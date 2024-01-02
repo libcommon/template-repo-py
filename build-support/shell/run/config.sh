@@ -4,8 +4,10 @@ CONTAINER_RUNTIME="docker"
 # Default command to run
 DEFAULT_COMMAND="build"
 
-# Default Python version to install in build container
-DEFAULT_PYTHON_VERSION="3.8.13"
+# Python versions to install in build container, in priority order
+PYTHON_VERSIONS="3.11.7 3.10.13 3.9.18"
+# Default Python version to use
+DEFAULT_PYTHON_VERSION="3.11.7"
 
 # Editor virtual environment path
 # Useful for editors like Vim/Neovim with plugins that
