@@ -39,7 +39,6 @@ confidence=
 # --disable=W".
 disable=C0104,  # Disallowed names
     C0114,  # Missing module docstring (see: C0111)
-    C0330,  # Trailing whitespace
     R0801,  # Duplicate code, false positives on overriden functions
     W0511   # TODO messages
 
@@ -188,13 +187,6 @@ max-line-length=120
 
 # Maximum number of lines in a module.
 max-module-lines=1000
-
-# List of optional constructs for which whitespace checking is disabled. `dict-
-# separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
-# `trailing-comma` allows a space between comma and closing bracket: (a, ).
-# `empty-line` allows space-only lines.
-no-space-check=
-    trailing-comma,
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
