@@ -191,6 +191,7 @@ run-editor-venv() {
     . "${EDITOR_VENV_PATH}/bin/activate"
     pip install -U pip wheel
     pip install -r "${EDITOR_VENV_PATH}/requirements.txt"
+    pip install -e .
     deactivate
 }
 
