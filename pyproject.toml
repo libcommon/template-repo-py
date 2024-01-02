@@ -1,9 +1,3 @@
-[tool.black]
-include = "\\.pyi?$"
-line-length = 120
-# Must include PYTHON_VERSION setting
-target-version = ["py38", "py39", "py310", "py311"]
-
 [tool.poetry]
 name = "template-repo-py"
 version = "0.1.0"
@@ -19,7 +13,7 @@ include = [
 
 [tool.poetry.dependencies]
 # Must include Poetry Python version setting
-python = ">=3.8, <=3.11"
+python = ">=3.9, <3.12"
 
 [tool.poetry.group.check.dependencies]
 mypy = "^1.8.0"
@@ -42,15 +36,22 @@ sphinx-autodoc-typehints = "^1.25.2"
 sphinx-copybutton = "^0.5.2"
 sphinx-material = "0.0.36"
 
+[tool.black]
+include = "\\.pyi?$"
+line-length = 120
+# Must match PYTHON_VERSIONS setting in config.sh
+target-version = ["py39", "py310", "py311"]
+
 [tool.isort]
 line_length = 120
 # See: https://pycqa.github.io/isort/reference/isort/profiles.html
-profile = black
-src_paths = ["src", "tests" ]
+profile = "black"
+src_paths = [ "src", "tests" ]
 
 [tool.mypy]
 warn_return_any = true
 warn_unused_ignores = true
+files = [ "src", "tests" ]
 
 [build-system]
 requires = ["poetry-core>=1.8.0"]
