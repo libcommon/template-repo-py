@@ -285,7 +285,7 @@ run-init() {
         -e "s/template_repo_py/${PROJECT_MODULE_NAME}/g" \
         README.md \
         build-support/shell/run/config.sh \
-        docs/_src/root.rst \
+        docs/_src/index.rst \
         pytest.ini \
         tests/template_repo_py/test_template_repo_py.py
 
