@@ -23,7 +23,7 @@ black = "^23.12.1"
 isort = "^5.13.2"
 
 [tool.poetry.group.lint.dependencies]
-pylint = "^3.0.3"
+pylint = "^3.1.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.3"
